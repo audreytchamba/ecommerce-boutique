@@ -1,0 +1,81 @@
+/**
+ * assets/css/admin/admin-login.css
+ * Styles pour la page de connexion de l'administration.
+ */
+
+.login-body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-on-dark);
+    font-family: var(--font-body);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--space-md);
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-card {
+    background-color: var(--color-primary-dark);
+    padding: var(--space-xl);
+    border-radius: var(--radius-md);
+    border-top: 4px solid var(--color-secondary);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.login-card h1 {
+    font-family: var(--font-heading);
+    color: var(--color-secondary-light);
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: var(--space-xs);
+}
+
+.login-subtitle {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+}
+
+.login-card .form-group {
+    margin-bottom: var(--space-md);
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    color: var(--color-text-on-dark);
+}
+
+.login-card input {
+    width: 100%;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-primary-light);
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-on-dark);
+}
+
+.login-card .btn {
+    margin-top: var(--space-md);
+    background-color: var(--color-secondary);
+    color: var(--color-primary-dark);
+    font-weight: bold;
+}
+
+.login-card .btn:hover {
+    background-color: var(--color-secondary-dark);
+}
+
+.form-error {
+    background-color: rgba(179, 38, 30, 0.2);
+    color: #ffc2be;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-danger);
+    text-align: center;
+}

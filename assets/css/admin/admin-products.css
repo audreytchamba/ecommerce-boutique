@@ -1,0 +1,146 @@
+/**
+ * assets/css/admin/admin-products.css
+ * Styles pour la liste et le formulaire de gestion des produits.
+ */
+
+/* --- Liste des produits (products.php) --- */
+.table-media-preview {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.table-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.btn.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+    border: 1px solid var(--color-danger);
+}
+.btn.btn-danger:hover {
+    background-color: #93201a;
+}
+
+.alert {
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+}
+.alert-success {
+    color: #c1e8c1;
+    background-color: rgba(59, 122, 59, 0.2);
+    border-color: var(--color-success);
+}
+.alert-danger {
+    color: #ffc2be;
+    background-color: rgba(179, 38, 30, 0.2);
+    border-color: var(--color-danger);
+}
+
+/* --- Formulaire produit (product-form.php) --- */
+.admin-form .form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-lg);
+}
+
+@media (max-width: 992px) {
+    .admin-form .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    margin-bottom: var(--space-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-primary-light);
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-on-dark);
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-group small {
+    display: block;
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+}
+
+/* --- Prévisualisation des médias --- */
+#media-preview img,
+#media-preview video,
+.existing-media-preview {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-sm);
+}
+
+.gallery-preview-heading {
+    font-weight: bold;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text-muted);
+}
+
+.gallery-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.gallery-preview-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    display: block;
+}
+
+.gallery-preview-item.existing {
+    position: relative;
+}
+
+.gallery-preview-item .delete-checkbox {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    cursor: pointer;
+}

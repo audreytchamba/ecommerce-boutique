@@ -1,0 +1,158 @@
+/**
+ * assets/css/admin/admin-dashboard.css
+ * Styles pour les cartes de statistiques et tableaux du dashboard.
+ */
+
+/* --- Cartes de statistiques --- */
+.stat-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+.stat-card {
+    background-color: var(--color-primary-dark);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    border: 1px solid var(--color-primary-light);
+}
+
+.stat-card__icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-card__icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.stat-card__info {
+    line-height: 1.3;
+}
+
+.stat-card__title {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-xs);
+}
+
+.stat-card__value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: var(--color-text-on-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-card__info small {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+}
+
+/* --- Carte générique pour contenu (tableau, etc.) --- */
+.admin-card {
+    background-color: var(--color-primary-dark);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-primary-light);
+}
+
+.admin-card-header {
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-primary-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-family: var(--font-heading);
+}
+
+.admin-card-body {
+    padding: var(--space-md);
+    overflow-x: auto; /* Pour la responsivité sur mobile */
+}
+
+/* --- Tableau Admin --- */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    border-bottom: 1px solid var(--color-primary-light);
+    vertical-align: middle;
+}
+
+.admin-table th {
+    color: var(--color-text-muted);
+    font-weight: normal;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+    background-color: var(--color-primary-light);
+}
+
+.admin-table .text-center {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-lg);
+}
+
+/* --- Boutons --- */
+.btn.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.btn.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
+}
+.btn.btn-outline:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-primary-dark);
+}
+
+/* --- Badges de statut --- */
+.badge {
+    padding: 0.3em 0.7em;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.badge.status-pending { background-color: rgba(212, 175, 55, 0.2); color: var(--color-secondary-light); }
+.badge.status-processing { background-color: rgba(44, 95, 124, 0.2); color: #87ceeb; }
+.badge.status-shipped { background-color: rgba(44, 95, 124, 0.3); color: #add8e6; }
+.badge.status-completed { background-color: rgba(59, 122, 59, 0.2); color: #90ee90; }
+.badge.status-cancelled { background-color: rgba(179, 38, 30, 0.2); color: #ffc2be; }
+
+.mt-lg {
+    margin-top: var(--space-lg);
+}

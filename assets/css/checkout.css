@@ -1,0 +1,63 @@
+/**
+ * checkout.css
+ * Mise en page spécifique de la page checkout.php (récap + formulaire).
+ */
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-lg);
+    align-items: start;
+}
+
+@media (max-width: 800px) {
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.checkout-summary {
+    background: var(--color-primary-dark);
+    color: var(--color-text-on-dark);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    position: sticky;
+    top: 90px;
+}
+
+.checkout-summary__item {
+    display: flex;
+    justify-content: space-between;
+    padding-block: var(--space-xs);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.9rem;
+}
+
+.checkout-summary__total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-secondary);
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 2px solid var(--color-secondary);
+}
+
+.checkout-form-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+}
+
+@media (max-width: 560px) {
+    .form-row { grid-template-columns: 1fr; }
+}

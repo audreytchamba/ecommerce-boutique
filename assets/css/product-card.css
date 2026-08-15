@@ -1,0 +1,13 @@
+/**
+ * product-card.css
+ * Ajustements spécifiques à la page catalogue, en complément de
+ * .product-card défini dans main.css (ne pas dupliquer les règles de base).
+ */
+
+.product-card__media video {
+    pointer-events: none; /* la miniature ne se lit pas au survol, juste visuelle */
+}
+
+.js-add-to-cart.is-added {
+    background: var(--color-success);
+}

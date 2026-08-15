@@ -1,0 +1,57 @@
+/**
+ * variables.css
+ * Variables CSS de la charte graphique — Bordeaux / Doré, style chic
+ * type pâtisserie / cave à vin.
+ * Ce fichier ne contient QUE des déclarations de variables, aucun style
+ * appliqué directement (voir main.css pour l'application).
+ */
+
+:root {
+    /* ---- Couleurs primaires (charte) ---- */
+    --color-primary: #4A0E17;        /* Bordeaux profond — boutons, accents forts */
+    --color-primary-dark: #2A070C;   /* Bordeaux sombre — fonds de cartes, header */
+    --color-primary-light: #7A1E2C;  /* Bordeaux clair — hover, dégradés */
+
+    --color-secondary: #D4AF37;      /* Doré / ambre — mises en valeur */
+    --color-secondary-dark: #C59B27; /* Doré plus soutenu — hover boutons dorés */
+    --color-secondary-light: #E8D48A;/* Doré clair — bordures, détails subtils */
+
+    /* ---- Fonds ---- */
+    --color-bg: #FBF8F3;             /* Fond général crème/champagne clair */
+    --color-bg-alt: #F3ECE0;         /* Fond alterné (sections) */
+    --color-bg-dark: #1E0509;        /* Fond sombre chic (footer, hero) */
+
+    /* ---- Textes ---- */
+    --color-text: #2B2118;           /* Texte principal sur fond clair */
+    --color-text-muted: #6B5E4F;     /* Texte secondaire */
+    --color-text-on-dark: #F3ECE0;   /* Texte sur fond bordeaux/sombre */
+    --color-text-on-primary: #FFFFFF;/* Texte sur bouton bordeaux */
+
+    /* ---- États ---- */
+    --color-success: #3B7A3B;
+    --color-danger: #B3261E;
+    --color-warning: #B8860B;
+    --color-info: #2C5F7C;
+
+    /* ---- Bordures & ombres ---- */
+    --color-border: #E3D9C6;
+    --shadow-card: 0 2px 10px rgba(42, 7, 12, 0.08);
+    --shadow-card-hover: 0 6px 20px rgba(42, 7, 12, 0.16);
+
+    /* ---- Typographie ---- */
+    --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-body: 'Inter', -apple-system, Segoe UI, Roboto, sans-serif;
+
+    /* ---- Rayons & espacements ---- */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    --space-xs: 0.4rem;
+    --space-sm: 0.8rem;
+    --space-md: 1.6rem;
+    --space-lg: 2.4rem;
+    --space-xl: 4rem;
+
+    --container-max-width: 1200px;
+}
