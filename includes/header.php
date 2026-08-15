@@ -19,7 +19,14 @@ $pageTitle = $pageTitle ?? SITE_NAME;
             <link rel="stylesheet" href="<?= e(SITE_URL . $sheet) ?>">
         <?php endforeach; ?>
     <?php endif; ?>
+    <script src="<?= e(SITE_URL) ?>/assets/js/loader.js"></script>
 </head>
 <body>
+<!-- Loader -->
+<div id="loader" class="loader">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+</div>
+
 <?php require_once __DIR__ . '/navbar.php'; ?>
 <main>
