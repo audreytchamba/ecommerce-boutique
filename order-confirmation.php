@@ -13,7 +13,7 @@ require __DIR__ . '/config/config.php';
 require __DIR__ . '/includes/sanitize.php';
 require __DIR__ . '/includes/csrf.php';
 require __DIR__ . '/includes/functions.php';
-require __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/db.php';
 
 $ref = clean_input($_GET['ref'] ?? '');
 
@@ -68,13 +68,8 @@ require __DIR__ . '/includes/header.php';
     <a href="<?= e(SITE_URL) ?>/index.php" class="btn btn-primary">Retour à la boutique</a>
 </section>
 
-<script>
-    // Le panier a été traité côté serveur avec succès : on le vide côté client.
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof cartClear === 'function') {
-            cartClear();
-        }
-    });
-</script>
-
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php 
+// Indiquer au footer que le panier doit être vidé
+$clearCartOnPageLoad = true;
+require __DIR__ . '/includes/footer.php'; 
+?>

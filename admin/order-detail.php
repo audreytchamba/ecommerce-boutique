@@ -7,9 +7,16 @@ declare(strict_types=1);
 
 require __DIR__ . '/../includes/auth.php';
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/sanitize.php';
 require __DIR__ . '/../includes/functions.php';
+
+$statusLabels = [
+    'pending'    => '⏳ En attente',
+    'confirmed'  => '✓ Confirmée',
+    'delivered'  => '📦 Livrée',
+    'cancelled'  => '✗ Annulée',
+];
 
 $orderId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
@@ -43,7 +50,24 @@ $extraStylesheets = [
 ];
 
 require __DIR__ . '/../includes/admin/admin-header.php';
+
+// Générer un token CSRF si ce n'est pas déjà fait
+csrf_token();
 ?>
+
+<?php if (!empty($_SESSION['success_message'])): ?>
+    <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border: 1px solid #c3e6cb;">
+        ✓ <?= e($_SESSION['success_message']) ?>
+    </div>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
+<?php if (!empty($_SESSION['error_message'])): ?>
+    <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border: 1px solid #f5c6cb;">
+        ✗ <?= e($_SESSION['error_message']) ?>
+    </div>
+    <?php unset($_SESSION['error_message']); ?>
+<?php endif; ?>
 
 <div class="order-detail-layout">
     <!-- Colonne principale : articles commandés -->
@@ -99,8 +123,25 @@ require __DIR__ . '/../includes/admin/admin-header.php';
         <div class="admin-card mt-lg">
             <div class="admin-card-header"><h3>Statut de la commande</h3></div>
             <div class="admin-card-body">
-                <p><strong>Statut actuel :</strong> <span class="badge status-<?= e($order['status']) ?>"><?= e(ucfirst($order['status'])) ?></span></p>
-                <!-- Ici, on pourra ajouter un formulaire pour changer le statut -->
+                <p><strong>Statut actuel :</strong> <span class="badge status-<?= e($order['status']) ?>"><?= $statusLabels[$order['status']] ?? ucfirst($order['status']) ?></span></p>
+                
+                <form method="POST" action="<?= e(SITE_URL) ?>/actions/admin/update-order-status.php" style="margin-top: 1.5rem;">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+                    <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                    
+                    <div class="form-group">
+                        <label for="new_status">Changer le statut :</label>
+                        <select id="new_status" name="status" class="form-control" style="width:100%; padding:0.5rem; border:1px solid var(--color-border); border-radius:4px;">
+                            <option value="">-- Sélectionner un statut --</option>
+                            <option value="pending" <?= $order['status'] === 'pending' ? 'selected' : '' ?>>⏳ En attente</option>
+                            <option value="confirmed" <?= $order['status'] === 'confirmed' ? 'selected' : '' ?>>✓ Confirmée</option>
+                            <option value="delivered" <?= $order['status'] === 'delivered' ? 'selected' : '' ?>>📦 Livrée</option>
+                            <option value="cancelled" <?= $order['status'] === 'cancelled' ? 'selected' : '' ?>>✗ Annulée</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Mettre à jour le statut</button>
+                </form>
             </div>
         </div>
     </div>

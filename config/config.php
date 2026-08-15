@@ -33,24 +33,16 @@ define('ROOT_PATH', dirname(__DIR__));
 define('UPLOAD_DIR', ROOT_PATH . '/uploads/products/');
 define('UPLOAD_URL', SITE_URL . '/uploads/products/');
 
-// ---------------------------------------------------------------------
-// Upload : règles de sécurité (utilisées par actions/admin/product-*.php)
-// ---------------------------------------------------------------------
 define('UPLOAD_MAX_SIZE', 5 * 1024 * 1024); // 5 Mo
 define('UPLOAD_ALLOWED_IMAGE_MIME', ['image/jpeg', 'image/png', 'image/webp']);
 define('UPLOAD_ALLOWED_VIDEO_MIME', ['video/mp4', 'video/webm']);
 define('UPLOAD_ALLOWED_IMAGE_EXT', ['jpg', 'jpeg', 'png', 'webp']);
 define('UPLOAD_ALLOWED_VIDEO_EXT', ['mp4', 'webm']);
 
-// ---------------------------------------------------------------------
-// Sécurité admin (anti-bruteforce)
-// ---------------------------------------------------------------------
+
 define('LOGIN_MAX_ATTEMPTS', 5);
 define('LOGIN_LOCK_MINUTES', 15);
 
-// ---------------------------------------------------------------------
-// Affichage des erreurs selon l'environnement
-// ---------------------------------------------------------------------
 if (APP_ENV === 'local') {
     ini_set('display_errors', '1');
     error_reporting(E_ALL);

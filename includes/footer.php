@@ -44,6 +44,13 @@ declare(strict_types=1);
 
 <script src="<?= e(SITE_URL) ?>/assets/js/cart.js"></script>
 <script src="<?= e(SITE_URL) ?>/assets/js/navbar-mobile.js"></script>
+<?php if (!empty($clearCartOnPageLoad) && $clearCartOnPageLoad === true): ?>
+<script>
+    // Le panier a été traité et la commande confirmée : on le vide côté client
+    cartClear();
+    console.log('Panier vidé après confirmation de commande');
+</script>
+<?php endif; ?>
 <?php if (!empty($extraScripts) && is_array($extraScripts)): ?>
     <?php foreach ($extraScripts as $script): ?>
         <script src="<?= e(SITE_URL . $script) ?>"></script>

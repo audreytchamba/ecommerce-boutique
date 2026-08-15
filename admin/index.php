@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../includes/auth.php'; // Le garde d'authentification
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/sanitize.php';
 require __DIR__ . '/../includes/functions.php'; // Pour format_price
 
@@ -120,7 +120,7 @@ require __DIR__ . '/../includes/admin/admin-header.php';
                             <td><?= format_price((float) $order['total_amount']) ?></td>
                             <td><span class="badge status-<?= e($order['status']) ?>"><?= e(ucfirst($order['status'])) ?></span></td>
                             <td>
-                                <a href="/admin/order-detail.php?id=<?= (int) $order['id'] ?>" class="btn btn-sm btn-outline">Détails</a>
+                                <a href="<?= e(SITE_URL) ?>/admin/order-detail.php?id=<?= (int) $order['id'] ?>" class="btn btn-sm btn-outline">Détails</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

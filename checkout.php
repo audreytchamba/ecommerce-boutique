@@ -1,15 +1,5 @@
 <?php
-/**
- * checkout.php
- * Formulaire de commande. Le panier est stocké côté client (localStorage),
- * donc l'affichage du récapitulatif et le remplissage du champ caché
- * "cart_items_json" sont faits en JavaScript par checkout.js — cette page
- * ne connaît le contenu du panier qu'au moment du submit.
- *
- * La validation SERVEUR définitive est faite dans actions/process_order.php ;
- * ce formulaire fait uniquement de la validation front (UX), jamais de
- * confiance côté serveur.
- */
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/session.php';
@@ -108,7 +98,7 @@ unset($_SESSION['checkout_old_input']);
                 </div>
 
                 <p style="margin-bottom:1rem;">
-                    <span class="badge-cod">💵 Paiement uniquement à la livraison</span>
+                    <span class="badge-cod"> Paiement uniquement à la livraison</span>
                 </p>
 
                 <button type="submit" class="btn btn-primary btn-block" id="checkout-submit-btn">

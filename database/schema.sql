@@ -9,7 +9,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- ---------------------------------------------------------------------
 -- Table : categories
--- Les 4 rubriques produits (Cake Apéro, Musique, Beauty & Fragrance, Wine...)
+-- Les 4 rubriques produits (Cake & Apero, Musique, Beauty & Fragrance, Wine...)
 -- ---------------------------------------------------------------------
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
@@ -152,7 +152,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- =====================================================================
 INSERT INTO `categories` (`name`, `slug`, `description`, `icon`, `sort_order`, `is_active`)
 VALUES
-('Cake Apéro',        'cake-apero',        'Mini cakes faits maison et muffins salés raffinés.', 'utensils', 1, 1),
+('Cake & Aperro',     'cake-apero',        'Mini cakes faits maison et muffins salés raffinés.', 'utensils', 1, 1),
 ('Musique',            'musique',           "Sélection d'albums exclusifs, casques et enceintes.", 'headphones', 2, 1),
 ('Beauty & Fragrance', 'beauty-fragrance',  'Parfums envoûtants et cosmétiques de soin.', 'sparkles', 3, 1),
 ('Wine',               'wine',              'Vins soigneusement choisis pour vos tables et réceptions.', 'wine-glass', 4, 1)
