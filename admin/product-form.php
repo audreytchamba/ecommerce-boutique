@@ -1,8 +1,5 @@
 <?php
-/**
- * admin/product-form.php
- * Formulaire d'ajout ou de modification d'un produit.
- */
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/auth.php';
@@ -40,8 +37,44 @@ if ($isEditing) {
     $pageTitle = 'Ajouter un nouveau produit';
 }
 
-// Récupérer les catégories pour le select
+// Récupérer les catégories actives pour le select
 $categories = $pdo->query("SELECT id, name FROM categories WHERE is_active = 1 ORDER BY name")->fetchAll();
+
+
+if ($isEditing && $product) {
+    $hasCurrentCategory = false;
+    foreach ($categories as $cat) {
+        if ((int) $cat['id'] === (int) $product['category_id']) {
+            $hasCurrentCategory = true;
+            break;
+        }
+    }
+    if (!$hasCurrentCategory) {
+        $stmt = $pdo->prepare("SELECT id, name FROM categories WHERE id = ?");
+        $stmt->execute([$product['category_id']]);
+        $currentCat = $stmt->fetch();
+        if ($currentCat) {
+            $currentCat['name'] .= ' (inactive)';
+            $categories[] = $currentCat;
+        }
+    }
+}
+
+
+$oldInput = $_SESSION['product_form_old_input'] ?? null;
+unset($_SESSION['product_form_old_input']);
+
+
+function form_value(?array $oldInput, ?array $product, string $key, $default = '')
+{
+    if ($oldInput !== null && array_key_exists($key, $oldInput)) {
+        return $oldInput[$key];
+    }
+    if ($product !== null && array_key_exists($key, $product)) {
+        return $product[$key];
+    }
+    return $default;
+}
 
 $extraStylesheets = ['/assets/css/admin/admin-products.css'];
 $extraScripts = ['/assets/js/admin/admin-media.js'];
@@ -71,11 +104,11 @@ require_once __DIR__ . '/../includes/admin/admin-header.php';
                 <div class="admin-card-body">
                     <div class="form-group">
                         <label for="name">Nom du produit</label>
-                        <input type="text" id="name" name="name" value="<?= e($product['name'] ?? '') ?>" required>
+                        <input type="text" id="name" name="name" value="<?= e((string) form_value($oldInput, $product, 'name', '')) ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea id="description" name="description" rows="8"><?= e($product['description'] ?? '') ?></textarea>
+                        <textarea id="description" name="description" rows="8"><?= e((string) form_value($oldInput, $product, 'description', '')) ?></textarea>
                     </div>
                 </div>
             </div>
@@ -139,14 +172,17 @@ require_once __DIR__ . '/../includes/admin/admin-header.php';
                 <div class="admin-card-body">
                     <div class="form-group">
                         <label for="price">Prix (<?= e(CURRENCY_SYMBOL) ?>)</label>
-                        <input type="number" id="price" name="price" step="0.01" min="0" value="<?= e($product['price'] ?? '0.00') ?>" required>
+                        <input type="number" id="price" name="price" step="0.01" min="0" value="<?= e((string) form_value($oldInput, $product, 'price', '0.00')) ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="category_id">Catégorie</label>
                         <select id="category_id" name="category_id" required>
                             <option value="">-- Choisir une catégorie --</option>
+                            <?php
+                            $selectedCategoryId = form_value($oldInput, $product, 'category_id', null);
+                            ?>
                             <?php foreach ($categories as $category): ?>
-                                <option value="<?= (int)$category['id'] ?>" <?= (isset($product) && $product['category_id'] == $category['id']) ? 'selected' : '' ?>>
+                                <option value="<?= (int)$category['id'] ?>" <?= ($selectedCategoryId !== null && (int) $selectedCategoryId === (int) $category['id']) ? 'selected' : '' ?>>
                                     <?= e($category['name']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -154,7 +190,7 @@ require_once __DIR__ . '/../includes/admin/admin-header.php';
                     </div>
                     <div class="form-group">
                         <label for="stock">Quantité en stock</label>
-                        <input type="number" id="stock" name="stock" min="0" value="<?= e($product['stock'] ?? '0') ?>" required>
+                        <input type="number" id="stock" name="stock" min="0" value="<?= e((string) form_value($oldInput, $product, 'stock', '0')) ?>" required>
                     </div>
                 </div>
             </div>
@@ -162,15 +198,19 @@ require_once __DIR__ . '/../includes/admin/admin-header.php';
             <div class="admin-card mt-lg">
                 <div class="admin-card-header"><h3>Publication</h3></div>
                 <div class="admin-card-body">
+                    <?php
+                    $isActiveVal = form_value($oldInput, $product, 'is_active', 1);
+                    $isFeaturedVal = form_value($oldInput, $product, 'is_featured', 0);
+                    ?>
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" name="is_active" value="1" <?= (!isset($product) || $product['is_active']) ? 'checked' : '' ?>>
+                            <input type="checkbox" name="is_active" value="1" <?= $isActiveVal ? 'checked' : '' ?>>
                             Rendre le produit visible sur le site
                         </label>
                     </div>
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" name="is_featured" value="1" <?= (isset($product) && $product['is_featured']) ? 'checked' : '' ?>>
+                            <input type="checkbox" name="is_featured" value="1" <?= $isFeaturedVal ? 'checked' : '' ?>>
                             Mettre en avant sur la page d'accueil
                         </label>
                     </div>

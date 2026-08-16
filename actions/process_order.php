@@ -1,21 +1,4 @@
 <?php
-/**
- * actions/process_order.php
- * Traitement de la commande client. AUCUN HTML ici — uniquement logique
- * + redirection.
- *
- * Points de sécurité clés :
- * 1. Vérification CSRF avant tout traitement.
- * 2. Validation stricte de chaque champ (type, longueur, format).
- * 3. Les PRIX ne sont JAMAIS acceptés depuis le client : on ne fait
- *    confiance qu'à l'id produit envoyé, et on relit le prix réel en
- *    base pour chaque article (protection contre la manipulation du
- *    panier / prix côté navigateur).
- * 4. Insertion transactionnelle (orders + order_items) : tout ou rien.
- * 5. L'échec de l'envoi d'e-mail n'annule jamais une commande déjà
- *    enregistrée (l'email est une notification, pas une condition
- *    métier) — mais orders.email_sent trace l'état pour un renvoi manuel.
- */
 
 declare(strict_types=1);
 
@@ -34,10 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 csrf_verify();
 
-/**
- * Redirige vers checkout.php avec les erreurs et les valeurs saisies,
- * pour que l'utilisateur ne perde pas sa saisie.
- */
+
 function redirect_with_errors(array $errors, array $oldInput): void
 {
     $_SESSION['checkout_errors']    = $errors;
@@ -140,9 +120,20 @@ if (count($dbProducts) !== count($requestedItems)) {
 
 $orderItemsToInsert = [];
 $totalAmount = 0.0;
+$stockErrors = [];
 
 foreach ($dbProducts as $product) {
     $quantity = $requestedItems[(int) $product['id']];
+
+    if ($quantity > (int) $product['stock']) {
+        $stockErrors[] = sprintf(
+            'Stock insuffisant pour "%s" (disponible : %d).',
+            $product['name'],
+            (int) $product['stock']
+        );
+        continue;
+    }
+
     $subtotal = (float) $product['price'] * $quantity;
     $totalAmount += $subtotal;
 
@@ -155,9 +146,11 @@ foreach ($dbProducts as $product) {
     ];
 }
 
-// -----------------------------------------------------------------------
-// 4. Insertion transactionnelle : orders + order_items + sales_count
-// -----------------------------------------------------------------------
+if (!empty($stockErrors)) {
+    redirect_with_errors($stockErrors, $oldInput);
+}
+
+
 try {
     $pdo->beginTransaction();
 
@@ -192,8 +185,12 @@ try {
         'INSERT INTO order_items (order_id, product_id, product_name, unit_price, quantity, subtotal)
          VALUES (:order_id, :product_id, :product_name, :unit_price, :quantity, :subtotal)'
     );
-    $incrementSales = $pdo->prepare(
-        'UPDATE products SET sales_count = sales_count + :qty WHERE id = :id'
+
+    
+    $updateStockAndSales = $pdo->prepare(
+        'UPDATE products
+         SET stock = stock - :qty, sales_count = sales_count + :qty
+         WHERE id = :id AND stock >= :qty'
     );
 
     foreach ($orderItemsToInsert as $line) {
@@ -206,10 +203,17 @@ try {
             'subtotal'     => $line['subtotal'],
         ]);
 
-        $incrementSales->execute([
+        $updateStockAndSales->execute([
             'qty' => $line['quantity'],
             'id'  => $line['product_id'],
         ]);
+
+        
+        if ($updateStockAndSales->rowCount() === 0) {
+            throw new RuntimeException(
+                'Stock épuisé entre-temps pour le produit #' . $line['product_id']
+            );
+        }
     }
 
     $pdo->commit();

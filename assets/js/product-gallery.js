@@ -1,15 +1,11 @@
-/**
- * assets/js/product-gallery.js
- * Gestion de la galerie d'images sur la page détail produit
- */
-
 document.addEventListener('DOMContentLoaded', function () {
     const mainImage = document.getElementById('main-image');
     const thumbButtons = document.querySelectorAll('.thumb-item');
     const quantityInput = document.getElementById('quantity');
     const qtyMinusBtn = document.querySelector('.qty-minus');
     const qtyPlusBtn = document.querySelector('.qty-plus');
-    const addToCartBtn = document.querySelector('.js-add-to-cart');
+   
+    const addToCartBtn = document.querySelector('.js-add-to-cart-detail');
     const message = document.getElementById('add-to-cart-message');
 
     // Galerie : changer l'image principale en cliquant sur les miniatures
@@ -51,16 +47,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // Ajouter au panier
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', function () {
-            const id = parseInt(this.dataset.id);
+            const id = this.dataset.id;
             const name = this.dataset.name;
-            const price = parseFloat(this.dataset.price);
+            const price = this.dataset.price;
             const image = this.dataset.image;
             const qty = parseInt(quantityInput.value) || 1;
 
-            // Utiliser cartAddItem() depuis cart.js
+            // cartAddItem() (défini dans cart.js) attend UN OBJET
+            // { id, name, price, image } — pas des arguments positionnels.
             if (typeof cartAddItem === 'function') {
                 for (let i = 0; i < qty; i++) {
-                    cartAddItem(id, name, price, image);
+                    cartAddItem({ id, name, price, image });
                 }
 
                 // Afficher le message de confirmation

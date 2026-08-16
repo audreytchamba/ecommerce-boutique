@@ -104,9 +104,17 @@ require __DIR__ . '/includes/header.php';
             </div>
         </div>
 
+        <!--
+            IMPORTANT : ce bouton utilise la classe "js-add-to-cart-detail" et NON
+            "js-add-to-cart" (utilisée sur le catalogue index.php). Les deux classes
+            sont volontairement différentes pour éviter que l'écouteur générique de
+            cart.js (chargé globalement via footer.php) ne se déclenche EN PLUS de
+            celui, spécifique, de product-gallery.js — ce qui provoquait un double
+            ajout au panier avec un mauvais format d'appel (voir product-gallery.js).
+        -->
         <button
             type="button"
-            class="btn btn-primary btn-lg js-add-to-cart"
+            class="btn btn-primary btn-lg js-add-to-cart-detail"
             data-id="<?= (int) $product['id'] ?>"
             data-name="<?= e($product['name']) ?>"
             data-price="<?= (float) $product['price'] ?>"

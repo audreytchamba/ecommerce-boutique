@@ -1,9 +1,5 @@
 <?php
-/**
- * actions/admin/product_crud.php
- * Point d'entrée unique pour la création, mise à jour et suppression des produits.
- * Sécurité : Auth, CSRF, validation, upload sécurisé, transactions PDO.
- */
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../includes/auth.php';
@@ -50,7 +46,14 @@ function handle_file_upload(array $fileData, string $uploadSubDir = '/'): array|
     $extension = pathinfo($fileData['name'], PATHINFO_EXTENSION);
     $mediaType = str_starts_with($mimeType, 'image/') ? 'image' : 'video';
     $uniqueName = uniqid('prod_', true) . '.' . $extension;
-    $destinationPath = UPLOAD_DIR . ltrim($uploadSubDir, '/') . $uniqueName;
+
+    $destinationDir = UPLOAD_DIR . ltrim($uploadSubDir, '/');
+    if (!is_dir($destinationDir)) {
+        // Le sous-dossier (notamment /gallery/) peut ne pas exister encore.
+        mkdir($destinationDir, 0755, true);
+    }
+
+    $destinationPath = $destinationDir . $uniqueName;
 
     if (!move_uploaded_file($fileData['tmp_name'], $destinationPath)) {
         return 'Échec du déplacement du fichier uploadé.';
@@ -63,11 +66,15 @@ function handle_file_upload(array $fileData, string $uploadSubDir = '/'): array|
 }
 
 /**
- * Redirige vers le formulaire avec un message d'erreur.
+ *
+ * @param array<string, mixed> $oldInput
  */
-function redirect_with_error(string $message, ?int $productId = null): never
+function redirect_with_error(string $message, ?int $productId = null, array $oldInput = []): never
 {
     $_SESSION['flash_error'] = $message;
+    if (!empty($oldInput)) {
+        $_SESSION['product_form_old_input'] = $oldInput;
+    }
     $location = SITE_URL . '/admin/product-form.php' . ($productId ? '?id=' . $productId : '');
     header('Location: ' . $location, true, 303);
     exit;
@@ -87,6 +94,17 @@ switch ($action) {
         $isFeatured = isset($_POST['is_featured']) ? 1 : 0;
         $productId = filter_input(INPUT_POST, 'product_id', FILTER_VALIDATE_INT);
 
+        
+        $oldInputForRedirect = [
+            'name'        => $name,
+            'description' => $description,
+            'price'       => $_POST['price'] ?? '',
+            'category_id' => $categoryId,
+            'stock'       => $_POST['stock'] ?? '',
+            'is_active'   => $isActive,
+            'is_featured' => $isFeatured,
+        ];
+
         $errors = [];
         if (empty($name)) $errors[] = 'Le nom du produit est requis.';
         if ($price === false || $price < 0) $errors[] = 'Le prix est invalide.';
@@ -94,7 +112,7 @@ switch ($action) {
         if ($stock === false || $stock < 0) $errors[] = 'Le stock est invalide.';
 
         if (!empty($errors)) {
-            redirect_with_error(implode("\n", $errors), $productId);
+            redirect_with_error(implode("\n", $errors), $productId, $oldInputForRedirect);
         }
 
         $slug = generate_slug($name);
@@ -104,13 +122,18 @@ switch ($action) {
         if (isset($_FILES['media_file']) && $_FILES['media_file']['error'] === UPLOAD_ERR_OK) {
             $mediaResult = handle_file_upload($_FILES['media_file']);
             if (is_string($mediaResult)) {
-                redirect_with_error('Média principal : ' . $mediaResult, $productId);
+                redirect_with_error('Média principal : ' . $mediaResult, $productId, $oldInputForRedirect);
             }
+        }
+
+      
+        if ($action === 'create' && !$mediaResult) {
+            redirect_with_error('Le média principal est obligatoire pour la création.', null, $oldInputForRedirect);
         }
 
         $galleryResults = [];
         if (isset($_FILES['gallery_files'])) {
-            foreach ($_FILES['gallery_files']['name'] as $key => $name) {
+            foreach ($_FILES['gallery_files']['name'] as $key => $fileName) {
                 if ($_FILES['gallery_files']['error'][$key] === UPLOAD_ERR_OK) {
                     $fileData = [
                         'name' => $_FILES['gallery_files']['name'][$key],
@@ -121,21 +144,27 @@ switch ($action) {
                     ];
                     $galleryUpload = handle_file_upload($fileData, '/gallery/');
                     if (is_string($galleryUpload)) {
-                        redirect_with_error('Galerie : ' . $galleryUpload, $productId);
+                        // On nettoie ce qui a déjà été uploadé avant d'échouer ici.
+                        if ($mediaResult && file_exists(ROOT_PATH . $mediaResult['path'])) {
+                            unlink(ROOT_PATH . $mediaResult['path']);
+                        }
+                        foreach ($galleryResults as $img) {
+                            if (file_exists(ROOT_PATH . $img['path'])) {
+                                unlink(ROOT_PATH . $img['path']);
+                            }
+                        }
+                        redirect_with_error('Galerie : ' . $galleryUpload, $productId, $oldInputForRedirect);
                     }
                     $galleryResults[] = $galleryUpload;
                 }
             }
         }
 
-        // --- Opération BDD ---
+       
         try {
             $pdo->beginTransaction();
 
             if ($action === 'create') {
-                if (!$mediaResult) {
-                    redirect_with_error('Le média principal est obligatoire pour la création.');
-                }
                 $stmt = $pdo->prepare(
                     "INSERT INTO products (category_id, name, slug, description, price, media_type, media_path, stock, is_featured, is_active)
                      VALUES (:category_id, :name, :slug, :description, :price, :media_type, :media_path, :stock, :is_featured, :is_active)"
@@ -188,30 +217,40 @@ switch ($action) {
                     unlink(ROOT_PATH . $oldProduct['media_path']);
                 }
 
-                // Supprimer les images de la galerie cochées
+                
                 if (!empty($_POST['delete_gallery_images'])) {
-                    $idsToDelete = $_POST['delete_gallery_images'];
-                    $placeholders = implode(',', array_fill(0, count($idsToDelete), '?'));
+                    $idsToDelete = array_values(array_filter(
+                        array_map('intval', (array) $_POST['delete_gallery_images']),
+                        static fn ($id) => $id > 0
+                    ));
 
-                    // D'abord récupérer les chemins pour les supprimer du disque
-                    $stmt = $pdo->prepare("SELECT image_path FROM product_images WHERE id IN ($placeholders)");
-                    $stmt->execute($idsToDelete);
-                    $imagesToDelete = $stmt->fetchAll();
-                    foreach ($imagesToDelete as $img) {
-                        if (file_exists(ROOT_PATH . $img['image_path'])) {
-                            unlink(ROOT_PATH . $img['image_path']);
+                    if (!empty($idsToDelete)) {
+                        $placeholders = implode(',', array_fill(0, count($idsToDelete), '?'));
+
+                        
+                        $stmt = $pdo->prepare(
+                            "SELECT image_path FROM product_images WHERE id IN ($placeholders) AND product_id = ?"
+                        );
+                        $stmt->execute([...$idsToDelete, $productId]);
+                        $imagesToDelete = $stmt->fetchAll();
+                        foreach ($imagesToDelete as $img) {
+                            if (file_exists(ROOT_PATH . $img['image_path'])) {
+                                unlink(ROOT_PATH . $img['image_path']);
+                            }
                         }
-                    }
 
-                    // Puis supprimer de la BDD
-                    $stmt = $pdo->prepare("DELETE FROM product_images WHERE id IN ($placeholders)");
-                    $stmt->execute($idsToDelete);
+                       
+                        $stmt = $pdo->prepare(
+                            "DELETE FROM product_images WHERE id IN ($placeholders) AND product_id = ?"
+                        );
+                        $stmt->execute([...$idsToDelete, $productId]);
+                    }
                 }
 
                 $_SESSION['flash_message'] = 'Produit "' . e($name) . '" mis à jour avec succès.';
             }
 
-            // Insérer les nouvelles images de la galerie
+            
             if (!empty($galleryResults)) {
                 $stmt = $pdo->prepare("INSERT INTO product_images (product_id, image_path) VALUES (?, ?)");
                 foreach ($galleryResults as $img) {
@@ -223,13 +262,13 @@ switch ($action) {
 
         } catch (PDOException $e) {
             $pdo->rollBack();
-            // Supprimer les fichiers qui auraient pu être uploadés avant l'erreur BDD
+            
             if ($mediaResult && file_exists(ROOT_PATH . $mediaResult['path'])) unlink(ROOT_PATH . $mediaResult['path']);
             foreach ($galleryResults as $img) {
                 if (file_exists(ROOT_PATH . $img['path'])) unlink(ROOT_PATH . $img['path']);
             }
             error_log("Product CRUD Error: " . $e->getMessage());
-            redirect_with_error("Une erreur de base de données est survenue.", $productId);
+            redirect_with_error("Une erreur de base de données est survenue.", $productId, $oldInputForRedirect);
         }
 
         header('Location: ' . SITE_URL . '/admin/products.php', true, 303);
@@ -246,7 +285,7 @@ switch ($action) {
         try {
             $pdo->beginTransaction();
 
-            // 1. Récupérer tous les chemins de fichiers à supprimer
+            
             $stmt = $pdo->prepare("SELECT media_path FROM products WHERE id = ?");
             $stmt->execute([$productId]);
             $mainMedia = $stmt->fetchColumn();
@@ -255,7 +294,7 @@ switch ($action) {
             $stmt->execute([$productId]);
             $galleryImages = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-            // 2. Supprimer l'enregistrement de la BDD (la suppression en cascade s'occupe de product_images)
+            
             $stmt = $pdo->prepare("SELECT name FROM products WHERE id = ?");
             $stmt->execute([$productId]);
             $productName = $stmt->fetchColumn();
@@ -263,7 +302,7 @@ switch ($action) {
             $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");
             $stmt->execute([$productId]);
 
-            // 3. Si la suppression BDD a réussi, supprimer les fichiers physiques
+            
             if ($mainMedia && file_exists(ROOT_PATH . $mainMedia)) {
                 unlink(ROOT_PATH . $mainMedia);
             }
