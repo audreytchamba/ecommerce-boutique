@@ -38,7 +38,7 @@ csrf_verify();
  * Redirige vers checkout.php avec les erreurs et les valeurs saisies,
  * pour que l'utilisateur ne perde pas sa saisie.
  */
-function redirect_with_errors(array $errors, array $oldInput): never
+function redirect_with_errors(array $errors, array $oldInput): void
 {
     $_SESSION['checkout_errors']    = $errors;
     $_SESSION['checkout_old_input'] = $oldInput;
@@ -46,9 +46,7 @@ function redirect_with_errors(array $errors, array $oldInput): never
     exit;
 }
 
-// -----------------------------------------------------------------------
-// 1. Nettoyage et validation des champs client
-// -----------------------------------------------------------------------
+
 $oldInput = [
     'lastname'      => clean_input($_POST['lastname'] ?? ''),
     'firstname'     => clean_input($_POST['firstname'] ?? ''),
@@ -122,10 +120,7 @@ if (!empty($errors)) {
     redirect_with_errors($errors, $oldInput);
 }
 
-// -----------------------------------------------------------------------
-// 3. Revalidation des produits et des PRIX depuis la base (source de vérité)
-//    -> on ne fait jamais confiance au prix envoyé par le navigateur.
-// -----------------------------------------------------------------------
+
 $pdo = getDbConnection();
 
 $placeholders = implode(',', array_fill(0, count($requestedItems), '?'));
@@ -227,9 +222,7 @@ try {
     );
 }
 
-// -----------------------------------------------------------------------
-// 5. Envoi de l'e-mail de confirmation (best-effort, ne bloque jamais)
-// -----------------------------------------------------------------------
+
 $orderRow = [
     'order_ref'           => $orderRef,
     'customer_lastname'   => $oldInput['lastname'],
@@ -253,10 +246,7 @@ if ($emailSent) {
     $update->execute(['id' => $orderId]);
 }
 
-// -----------------------------------------------------------------------
-// 6. Succès : on vide le panier côté serveur (session flash) et on redirige
-//    Le panier localStorage est vidé côté client sur la page de confirmation.
-// -----------------------------------------------------------------------
+
 $_SESSION['last_order_ref'] = $orderRef;
 header('Location: ' . SITE_URL . '/order-confirmation.php?ref=' . urlencode($orderRef));
 exit;

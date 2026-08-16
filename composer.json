@@ -3,6 +3,7 @@
     "description": "Boutique e-commerce paiement à la livraison",
     "require": {
         "php": ">=8.0",
-        "phpmailer/phpmailer": "^6.9"
+        "phpmailer/phpmailer": "^6.9",
+        "ext-mbstring": "*"
     }
 }

@@ -10,6 +10,7 @@ require __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/sanitize.php';
 require __DIR__ . '/../includes/functions.php';
+require __DIR__ . '/../includes/csrf.php';
 
 $statusLabels = [
     'pending'    => '⏳ En attente',

@@ -26,7 +26,7 @@ if (!defined('SITE_URL')) {
     <link rel="stylesheet" href="<?= e(SITE_URL) ?>/assets/css/admin/admin-layout.css">
     <?php if (isset($extraStylesheets) && is_array($extraStylesheets)): ?>
         <?php foreach ($extraStylesheets as $stylesheet): ?>
-            <link rel="stylesheet" href="<?= e(SITE_URL . $stylesheet) ?>">
+            <link rel="stylesheet" href="<?= e(SITE_URL . '/' . ltrim($stylesheet, '/')) ?>">
         <?php endforeach; ?>
     <?php endif; ?>
 </head>

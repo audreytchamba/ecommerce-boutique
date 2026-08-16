@@ -13,6 +13,16 @@ Avant de commencer, assurez-vous d'avoir installé les outils suivants :
 - **Un terminal** ou une invite de commandes.
 - **Un éditeur de code** (ex: Visual Studio Code).
 
+### b. Configuration PHP (Important)
+
+Le projet nécessite certaines extensions PHP qui ne sont pas toujours activées par défaut.
+
+1.  **Activer `mbstring`** : Cette extension est cruciale pour la gestion des textes (UTF-8). L'oublier cause une erreur `Call to an undefined function mb_strlen()`.
+    -   Ouvrez le panneau de contrôle XAMPP, cliquez sur `Config` sur la ligne d'Apache, puis `PHP (php.ini)`.
+    -   Recherchez la ligne `;extension=mbstring`.
+    -   Supprimez le point-virgule (`;`) au début pour l'activer.
+    -   Enregistrez le fichier et **redémarrez Apache**.
+
 ## 2. Installation du Projet
 
 ### a. Placer les fichiers

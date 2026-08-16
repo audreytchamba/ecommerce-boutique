@@ -13,6 +13,7 @@ ecommerce-boutique/
 ├── cart.php                         # Page panier
 ├── checkout.php                     # Formulaire de commande
 ├── order-confirmation.php           # Page de confirmation après commande
+├── doc_lws.md                       # Guide de déploiement sur LWS
 ├── .htaccess                        # Headers sécurité + réécriture d'URL
 │
 ├── config/
@@ -39,20 +40,20 @@ ecommerce-boutique/
 │   ├── css/
 │   │   ├── variables.css            # Variables charte : --color-primary, --color-gold...
 │   │   ├── reset.css                # Normalize / reset de base
-│   │   ├── style.css                # Styles globaux (typo, layout général)
+│   │   ├── main.css                 # Styles globaux (typo, layout général)
 │   │   ├── navbar.css               # Styles du menu
 │   │   ├── product-card.css         # Carte produit (catalogue)
-│   │   ├── cart.css                 # Page panier
+│   │   ├── product-detail.css       # Page détail produit
 │   │   ├── checkout.css             # Formulaire de commande
-│   │   ├── footer.css               # Pied de page
 │   │   └── admin/
 │   │       ├── admin-layout.css     # Structure générale back-office
 │   │       ├── admin-dashboard.css  # Cartes statistiques
 │   │       ├── admin-products.css   # Tableau/formulaire produits
-│   │       └── admin-orders.css     # Tableau/détail commandes
+│   │       ├── admin-orders.css     # Tableau/détail commandes
+│   │       └── admin-login.css      # Page de connexion admin
 │   │
 │   ├── js/
-│   │   ├── cart.js                  # Ajout/suppression/calcul total panier (localStorage/session)
+│   │   ├── cart.js                  # Logique panier (localStorage)
 │   │   ├── navbar-mobile.js         # Gestion du menu hamburger
 │   │   ├── checkout.js              # Validation front du formulaire de commande
 │   │   ├── product-filter.js        # Filtrage catalogue par catégorie
@@ -60,7 +61,9 @@ ecommerce-boutique/
 │   │       ├── admin-media.js       # Upload/prévisualisation image-vidéo produit
 │   │       ├── admin-products.js    # Interactions CRUD produits (confirmations, AJAX)
 │   │       ├── admin-orders.js      # Changement de statut commande (AJAX)
-│   │       └── admin-charts.js      # Rendu des graphiques statistiques
+│   │       └── admin-charts.js      # Rendu des graphiques (non utilisé)
+│   │   ├── product-gallery.js       # Galerie d'images sur la fiche produit
+│   │   └── loader.js                # Affiche un spinner pendant le chargement de la page
 │   │
 │   └── images/
 │       ├── logo.png

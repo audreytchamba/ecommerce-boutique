@@ -24,7 +24,7 @@ require_once __DIR__ . '/includes/header.php';
     <div class="container text-center">
         <h1 style="color:var(--color-secondary);">Bienvenue chez <?= e(SITE_NAME) ?></h1>
         <p style="max-width:560px; margin-inline:auto;">
-            Cake & Aperro, musique, beauté & amp; parfums, vins — une sélection
+            Cake & Apero, musique, beauté & amp; parfums, vins — une sélection
             raffinée, livrée chez vous. <strong>Paiement à la livraison.</strong>
         </p>
     </div>
