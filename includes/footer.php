@@ -18,9 +18,9 @@ declare(strict_types=1);
             <div>
                 <h4 style="color:var(--color-secondary);">Contact</h4>
                 <p> Votre ville, Cameroun</p>
-                <p>📞 <a href="tel:+237690769540">+237690769540</a></p>
+                <p>📞 <a href="tel:+237600000000">+237 6 00 00 00 00</a></p>
                 <p>
-                    <a href="https://wa.me/237690769540" target="_blank" rel="noopener">
+                    <a href="https://wa.me/237600000000" target="_blank" rel="noopener">
                         💬 Nous écrire sur WhatsApp
                     </a>
                 </p>
@@ -44,13 +44,13 @@ declare(strict_types=1);
 
 <script src="<?= e(SITE_URL) ?>/assets/js/cart.js"></script>
 <script src="<?= e(SITE_URL) ?>/assets/js/navbar-mobile.js"></script>
+
 <?php if (!empty($clearCartOnPageLoad) && $clearCartOnPageLoad === true): ?>
-<script>
-    // Le panier a été traité et la commande confirmée : on le vide côté client
-    cartClear();
-    console.log('Panier vidé après confirmation de commande');
-</script>
+    
+    <div id="clear-cart-trigger" hidden aria-hidden="true"></div>
+    <script src="<?= e(SITE_URL) ?>/assets/js/clear-cart-on-load.js"></script>
 <?php endif; ?>
+
 <?php if (!empty($extraScripts) && is_array($extraScripts)): ?>
     <?php foreach ($extraScripts as $script): ?>
         <script src="<?= e(SITE_URL . $script) ?>"></script>

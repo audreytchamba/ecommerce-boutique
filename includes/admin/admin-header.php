@@ -1,19 +1,20 @@
 <?php
-/**
- * includes/admin/admin-header.php
- * Header commun pour toutes les pages du back-office.
- */
+
 declare(strict_types=1);
 
-// Assure les dépendances minimales si la page appelante ne les a pas incluses
-if (!function_exists('e')) {
-    require_once __DIR__ . '/../sanitize.php';
-}
+
 if (!defined('SITE_URL')) {
     require_once __DIR__ . '/../../config/config.php';
 }
 
-// La page qui inclut ce header doit définir $pageTitle et optionnellement $extraStylesheets
+
+require_once __DIR__ . '/../security-headers.php';
+
+if (!function_exists('e')) {
+    require_once __DIR__ . '/../sanitize.php';
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -26,7 +27,7 @@ if (!defined('SITE_URL')) {
     <link rel="stylesheet" href="<?= e(SITE_URL) ?>/assets/css/admin/admin-layout.css">
     <?php if (isset($extraStylesheets) && is_array($extraStylesheets)): ?>
         <?php foreach ($extraStylesheets as $stylesheet): ?>
-            <link rel="stylesheet" href="<?= e(SITE_URL . '/' . ltrim($stylesheet, '/')) ?>">
+            <link rel="stylesheet" href="<?= e(SITE_URL . $stylesheet) ?>">
         <?php endforeach; ?>
     <?php endif; ?>
 </head>

@@ -1,12 +1,11 @@
 <?php
-/**
- * admin/login.php
- * Page de connexion pour le back-office.
- */
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../config/config.php';
+
+require_once __DIR__ . '/../includes/security-headers.php';
 require_once __DIR__ . '/../includes/sanitize.php';
 require_once __DIR__ . '/../includes/csrf.php';
 
@@ -19,7 +18,7 @@ if (isset($_SESSION['admin_id'])) {
 $pageTitle = 'Administration - Connexion';
 $extraStylesheets = ['/assets/css/admin/admin-login.css'];
 
-// On utilise un header simplifié pour la page de login
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
