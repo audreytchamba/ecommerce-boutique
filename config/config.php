@@ -22,7 +22,7 @@ define('APP_ENV', 'local');
 // ---------------------------------------------------------------------
 // Informations générales du site
 // ---------------------------------------------------------------------
-define('SITE_NAME', 'GagaEMPIRE');
+define('SITE_NAME', 'GAGA_Empire');
 define('SITE_URL', 'http://localhost:8080'); // sans slash final
 define('CURRENCY_SYMBOL', 'FCFA');
 

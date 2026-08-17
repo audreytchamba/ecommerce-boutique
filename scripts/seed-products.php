@@ -10,6 +10,12 @@ require __DIR__ . '/../includes/functions.php';
 $pdo = getDbConnection();
 
 // Produits à créer avec leurs images
+// NOTE : le champ 'stock' est désormais obligatoire pour chaque produit.
+// Sans lui, la colonne products.stock retombe sur son DEFAULT 0 (voir
+// database/schema.sql), ce qui rend TOUS les produits immédiatement
+// "en rupture" du point de vue de actions/process_order.php (qui
+// vérifie désormais réellement le stock avant de valider une commande)
+// — aucune commande ne pouvait donc jamais aboutir après un ré-seed.
 $products = [
     // Cakes (Gâteaux)
     [
@@ -17,6 +23,7 @@ $products = [
         'name' => 'Gâteau Noël Festif',
         'description' => 'Délicieux gâteau de Noël garni de fruits confits et de chocolat noir.',
         'price' => 15000,
+        'stock' => 25,
         'media_type' => 'image',
         'media_path' => '/assets/images/peggy_marco-christmas-1931236_1920.jpg',
         'images' => [
@@ -29,6 +36,7 @@ $products = [
         'name' => 'Gâteau Fraise Gourmand',
         'description' => 'Génoise légère aux fraises fraîches et crème fouettée.',
         'price' => 12000,
+        'stock' => 25,
         'media_type' => 'image',
         'media_path' => '/assets/images/vogue0987-peach-cake-8598851_1920.jpg',
         'images' => [
@@ -41,6 +49,7 @@ $products = [
         'name' => 'Gâteau Amande Premium',
         'description' => 'Gâteau moelleux à la poudre d\'amande et ganache chocolat.',
         'price' => 18000,
+        'stock' => 15,
         'media_type' => 'image',
         'media_path' => '/assets/images/weteran20a-almond-cake-7825686_1920.jpg',
         'images' => [
@@ -55,6 +64,7 @@ $products = [
         'name' => 'Vin Blanc Excellence',
         'description' => 'Vin blanc sec de terroir, fruité et harmonieux.',
         'price' => 25000,
+        'stock' => 30,
         'media_type' => 'image',
         'media_path' => '/assets/images/santiagogonzalez-strawberry-wine-6782968_1920.jpg',
         'images' => [
@@ -67,6 +77,7 @@ $products = [
         'name' => 'Liqueur Artisanale',
         'description' => 'Liqueur douce aux épices et fruits exotiques.',
         'price' => 28000,
+        'stock' => 20,
         'media_type' => 'image',
         'media_path' => '/assets/images/sponchia-liqueur-3786194_1920.jpg',
         'images' => [
@@ -81,6 +92,7 @@ $products = [
         'name' => 'Parfum Délicat Floral',
         'description' => 'Parfum frais aux notes florales épanouies, idéal pour le jour.',
         'price' => 45000,
+        'stock' => 12,
         'media_type' => 'image',
         'media_path' => '/assets/images/hlevi-perfume-6899766_1920.jpg',
         'images' => [
@@ -93,6 +105,7 @@ $products = [
         'name' => 'Parfum Intensité Oud',
         'description' => 'Parfum oriental riche aux notes d\'oud et ambre, pour les soirées.',
         'price' => 55000,
+        'stock' => 10,
         'media_type' => 'image',
         'media_path' => '/assets/images/fabien_raquidel-perfume-8032808_1920.jpg',
         'images' => [
@@ -118,24 +131,25 @@ try {
 
         // Insérer le produit
         $stmt = $pdo->prepare(
-            'INSERT INTO products (category_id, name, slug, description, price, media_type, media_path, is_active)
-             VALUES (:category_id, :name, :slug, :description, :price, :media_type, :media_path, 1)'
+            'INSERT INTO products (category_id, name, slug, description, price, stock, media_type, media_path, is_active)
+             VALUES (:category_id, :name, :slug, :description, :price, :stock, :media_type, :media_path, 1)'
         );
 
         $slug = generate_slug($product['name']);
-        
+
         $stmt->execute([
             'category_id' => $category['id'],
             'name' => $product['name'],
             'slug' => $slug,
             'description' => $product['description'],
             'price' => $product['price'],
+            'stock' => $product['stock'],
             'media_type' => $product['media_type'],
             'media_path' => $product['media_path'],
         ]);
 
         $productId = (int) $pdo->lastInsertId();
-        echo "✅ Produit '{$product['name']}' créé (ID: $productId)\n";
+        echo "✅ Produit '{$product['name']}' créé (ID: $productId, stock: {$product['stock']})\n";
 
         // Ajouter les images à la galerie
         if (!empty($product['images'])) {

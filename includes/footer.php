@@ -18,9 +18,9 @@ declare(strict_types=1);
             <div>
                 <h4 style="color:var(--color-secondary);">Contact</h4>
                 <p> Votre ville, Cameroun</p>
-                <p>📞 <a href="tel:+237600000000">+237 6 00 00 00 00</a></p>
+                <p>📞 <a href="tel:+237690769540">+237 690769540</a></p>
                 <p>
-                    <a href="https://wa.me/237600000000" target="_blank" rel="noopener">
+                    <a href="https://wa.me/237690769540" target="_blank" rel="noopener">
                         💬 Nous écrire sur WhatsApp
                     </a>
                 </p>

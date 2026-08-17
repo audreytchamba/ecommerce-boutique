@@ -21,7 +21,7 @@ declare(strict_types=1);
 
         <div class="navbar-actions">
             <a href="<?= e(SITE_URL) ?>/cart.php" class="navbar-cart" aria-label="Voir le panier">
-                🛒 <span id="cart-badge" class="cart-badge">0</span>
+                🛒 <span id="cart-badge" class="cart-badge"></span>
             </a>
             <button type="button" class="navbar-toggle" id="navbar-toggle" aria-controls="navbar-menu" aria-expanded="false" aria-label="Ouvrir le menu">
                 <span class="icon-bar"></span>

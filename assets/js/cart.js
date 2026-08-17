@@ -15,9 +15,24 @@ function cartGetAll() {
     try {
         const raw = localStorage.getItem(CART_STORAGE_KEY);
         const items = raw ? JSON.parse(raw) : [];
-        return Array.isArray(items) ? items : [];
+        if (!Array.isArray(items)) {
+            return [];
+        }
+
+        // On filtre pour ne garder que les items valides et complets.
+        // Cela évite des erreurs si un item a été mal ajouté ou est corrompu.
+        // Un item valide doit avoir un id, un nom, un prix (nombre) et une quantité (nombre > 0).
+        return items.filter(item =>
+            item &&
+            item.id &&
+            item.name &&
+            typeof item.price === 'number' &&
+            typeof item.quantity === 'number' &&
+            item.quantity > 0
+        );
     } catch (e) {
         console.error('Panier corrompu, réinitialisation.', e);
+        localStorage.removeItem(CART_STORAGE_KEY); // On nettoie le localStorage pour éviter de futures erreurs.
         return [];
     }
 }
