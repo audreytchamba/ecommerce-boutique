@@ -82,7 +82,10 @@ require_once __DIR__ . '/../includes/admin/admin-header.php';
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
                                     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger js-confirm-delete" data-product-name="<?= e($product['name']) ?>" title="Supprimer">Supprimer</button>
+                                    <button type="submit" class="btn btn-sm btn-danger js-confirm-delete"
+                                            data-item-name="<?= e($product['name']) ?>"
+                                            data-confirm-message="Voulez-vous vraiment supprimer '<?= e($product['name']) ?>' ?&#10;Cette action est irréversible et supprimera également son média principal et toutes les images de sa galerie."
+                                            title="Supprimer">Supprimer</button>
                                 </form>
                             </td>
                         </tr>

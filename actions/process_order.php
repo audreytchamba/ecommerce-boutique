@@ -189,8 +189,8 @@ try {
     
     $updateStockAndSales = $pdo->prepare(
         'UPDATE products
-         SET stock = stock - :qty, sales_count = sales_count + :qty
-         WHERE id = :id AND stock >= :qty'
+         SET stock = stock - :qty1, sales_count = sales_count + :qty2
+         WHERE id = :id AND stock >= :qty3'
     );
 
     foreach ($orderItemsToInsert as $line) {
@@ -204,8 +204,10 @@ try {
         ]);
 
         $updateStockAndSales->execute([
-            'qty' => $line['quantity'],
-            'id'  => $line['product_id'],
+            'qty1' => $line['quantity'],
+            'qty2' => $line['quantity'],
+            'qty3' => $line['quantity'],
+            'id'   => $line['product_id'],
         ]);
 
         

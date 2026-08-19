@@ -84,7 +84,7 @@ ecommerce-boutique/
 │       ├── auth-login.php           # Traitement connexion (anti-bruteforce)
 │       ├── auth-logout.php
 │       ├── product_crud.php         # CRUD (Create, Update, Delete) des produits
-│       ├── category-create.php
+│       ├── category_crud.php        # CRUD (Create, Update, Delete) des catégories
 │       └── order-status-update.php
 │
 ├── admin/                            # Pages HTML du back-office (protégées par auth.php)
@@ -92,7 +92,8 @@ ecommerce-boutique/
 │   ├── index.php                    # Dashboard (CA mensuel, produit le + vendu)
 │   ├── products.php                 # Liste produits
 │   ├── product-form.php             # Ajout/édition produit (?id= si édition)
-│   ├── categories.php               # Gestion des catégories
+│   ├── categories.php               # Liste des catégories
+│   ├── category-form.php            # Ajout/édition catégorie (?id= si édition)
 │   ├── orders.php                   # Liste chronologique des commandes
 │   └── order-detail.php             # Détail d'une commande (?id=)
 │
